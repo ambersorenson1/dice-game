@@ -1,4 +1,6 @@
 <?php
+
+namespace App\Dto\Incoming;
 class CreatePlayerDto
 {
     private string $firstName;

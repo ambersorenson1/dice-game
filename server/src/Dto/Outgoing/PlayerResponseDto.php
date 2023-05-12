@@ -1,11 +1,14 @@
 <?php
-class  PlayerDto {
-    private int $playerId;
-    private string $firstName;
-    private string $lastName;
-    private string $auth0;
-    private string $backgroundColor;
-    private string $foregroundColor;
+
+namespace App\Dto\Outgoing;
+
+class  PlayerResponseDto {
+    public int $playerId;
+    public string $firstName;
+    public string $lastName;
+    public string $backgroundColor;
+    public string $foregroundColor;
+    public RoleResponseDto $role;
 
     /**
      * @return int
@@ -58,22 +61,6 @@ class  PlayerDto {
     /**
      * @return string
      */
-    public function getAuth0(): string
-    {
-        return $this->auth0;
-    }
-
-    /**
-     * @param string $auth0
-     */
-    public function setAuth0(string $auth0): void
-    {
-        $this->auth0 = $auth0;
-    }
-
-    /**
-     * @return string
-     */
     public function getBackgroundColor(): string
     {
         return $this->backgroundColor;
@@ -102,4 +89,21 @@ class  PlayerDto {
     {
         $this->foregroundColor = $foregroundColor;
     }
+
+    /**
+     * @return RoleResponseDto
+     */
+    public function getRole(): RoleResponseDto
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param RoleResponseDto $role
+     */
+    public function setRole(RoleResponseDto $role): void
+    {
+        $this->role = $role;
+    }
+
 }
