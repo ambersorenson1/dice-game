@@ -3,5 +3,8 @@
     "eslint": "^8.39.0",
     "eslint-config-react-app": "^7.0.1",
     "vite-plugin-eslint": "^1.8.1"
+  },
+  "dependencies": {
+    "@auth0/auth0-react": "^2.1.0"
   }
 }
