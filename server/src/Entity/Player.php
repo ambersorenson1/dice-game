@@ -35,6 +35,11 @@ class Player
     #[ORM\JoinColumn(name: 'role_id', referencedColumnName: 'role_id', nullable: false)]
     private ?Role $Role = null;
 
+    #[ORM\ManyToOne(inversedBy: 'Players')]
+    #[ORM\JoinColumn(name: 'game_id', referencedColumnName: 'game_id', nullable: false)]
+    private ?Game $Game = null;
+
+
     /**
      * @return int|null
      */
@@ -155,6 +160,18 @@ class Player
     public function setRole(?Role $Role): self
     {
         $this->Role = $Role;
+
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->Game;
+    }
+
+    public function setGame(?Game $Game): self
+    {
+        $this->Game = $Game;
 
         return $this;
     }
