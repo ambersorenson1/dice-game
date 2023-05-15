@@ -32,4 +32,11 @@ class PlayerController extends ApiController
     $dto = $this->getValidatedDto($request, CreatePlayerDto::class);
     return$this->json($this->playerService->createPlayer($dto));
     }
+
+    #[Route('api/players', methods: ('GET'))]
+public function getPlayers(): Response
+    {
+        return $this->json($this->playerService->getPlayers());
+    }
+
 }

@@ -69,13 +69,20 @@ class PlayerService extends AbstractMultiTransformer
        return $dto;
     }
 
-//    /**
-//     * @return PlayerResponseDto[]
-//     */
-//    public function getPlayers(): iterable
-//    {
-//        $allPlayers = $this->playerRepository->findAll();
-//        return $this->transformFromObject($allPlayers);
-//    }
+    /**
+     * @return PlayerResponseDto[]
+     */
+    public function getPlayers(): iterable
+    {
+        $allPlayers = $this->playerRepository->findAll();
+        $playerDtos = [];
+
+        foreach ($allPlayers as $player) {
+            $playerDtos[] = $this->transformFromObject($player);
+        }
+
+        return $playerDtos;
+    }
+
 
 }
