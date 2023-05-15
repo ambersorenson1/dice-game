@@ -8,7 +8,11 @@ class  PlayerResponseDto {
     public string $lastName;
     public string $backgroundColor;
     public string $foregroundColor;
+    public string $email;
+    public string $password;
+
     public RoleResponseDto $role;
+
 
     /**
      * @return int
@@ -88,6 +92,38 @@ class  PlayerResponseDto {
     public function setForegroundColor(string $foregroundColor): void
     {
         $this->foregroundColor = $foregroundColor;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     */
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 
     /**

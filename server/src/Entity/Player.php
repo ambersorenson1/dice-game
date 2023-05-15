@@ -36,7 +36,7 @@ class Player
     private ?Role $Role = null;
 
     #[ORM\ManyToOne(inversedBy: 'Players')]
-    #[ORM\JoinColumn(name: 'game_id', referencedColumnName: 'game_id', nullable: false)]
+    #[ORM\JoinColumn(name: 'game_id', referencedColumnName: 'game_id', nullable: true)]
     private ?Game $Game = null;
 
 
