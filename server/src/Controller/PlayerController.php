@@ -4,9 +4,11 @@
 namespace App\Controller;
 
 use App\Dto\Incoming\CreatePlayerDto;
+use App\Dto\Incoming\EditPlayerDto;
 use App\Exception\InvalidRequestDataException;
 use App\Serialization\SerializationService;
 use App\Service\PlayerService;
+use JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +26,7 @@ class PlayerController extends ApiController
 
     /**
      * @throws InvalidRequestDataException
-     * @throws \JsonException
+     * @throws JsonException
      */
     #[Route('api/players', methods: ('POST'))]
     public function  createPlayer(Request $request): Response
@@ -34,9 +36,20 @@ class PlayerController extends ApiController
     }
 
     #[Route('api/players', methods: ('GET'))]
-public function getPlayers(): Response
+    public function getPlayers(): Response
     {
         return $this->json($this->playerService->getPlayers());
     }
 
+    /**
+     * @throws InvalidRequestDataException
+     * @throws JsonException
+     */
+    #[Route('api/players/{id}', methods: ('PUT'))]
+    public function editPlayer(Request $request, $id): Response
+    {
+        $dto = $this->getValidatedDto($request, EditPlayerDto::class);
+        $dto->setId($id);
+        return $this->json($this->playerService->editPlayer($dto));
+    }
 }

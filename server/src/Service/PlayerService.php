@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Dto\Incoming\CreatePlayerDto;
+use App\Dto\Incoming\EditPlayerDto;
 use App\Dto\Outgoing\PlayerResponseDto;
 use App\Entity\Player;
 use App\Repository\PlayerRepository;
@@ -84,5 +85,19 @@ class PlayerService extends AbstractMultiTransformer
         return $playerDtos;
     }
 
+    public function editPlayer(EditPlayerDto $dto): Player
+    {
+        $player = $this->playerRepository->find($dto->getId());
+        $player->setFirstName($dto->getFirstName());
+        $player->setLastName($dto->getLastName());
+        $player->setBackgroundColor($dto->getBackgroundColor());
+        $player->setForegroundColor($dto->getForegroundColor());
+        $player->setEmail($dto->getEmail());
+        $player->setPassword($dto->getPassword());
 
+        $this->entityManager->persist($player);
+        $this->entityManager->flush();
+
+        return $player;
+    }
 }
