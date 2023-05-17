@@ -35,6 +35,9 @@ class PlayerController extends ApiController
     return$this->json($this->playerService->createPlayer($dto));
     }
 
+    /**
+     * @return Response
+     */
     #[Route('api/players', methods: ('GET'))]
     public function getPlayers(): Response
     {
@@ -52,4 +55,15 @@ class PlayerController extends ApiController
         $dto->setId($id);
         return $this->json($this->playerService->editPlayer($dto));
     }
+
+    /**
+     * @param int $playerId
+     * @return Response
+     */
+    #[Route('api/players/{id}', methods: ('DELETE'))]
+    public function deletePlayer(int $id): Response
+    {
+        return $this->json($this->playerService->deletePlayer($id));
+    }
+
 }

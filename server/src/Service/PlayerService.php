@@ -10,6 +10,7 @@ use App\Repository\PlayerRepository;
 use App\Repository\RoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class PlayerService extends AbstractMultiTransformer
 {
@@ -32,6 +33,10 @@ class PlayerService extends AbstractMultiTransformer
         $this->roleRepository = $roleRepository;
     }
 
+    /**
+     * @param CreatePlayerDto $createPlayerDto
+     * @return PlayerResponseDto
+     */
     public function createPlayer(CreatePlayerDto $createPlayerDto): PlayerResponseDto
     {
         $player = new Player();
@@ -85,6 +90,10 @@ class PlayerService extends AbstractMultiTransformer
         return $playerDtos;
     }
 
+    /**
+     * @param EditPlayerDto $dto
+     * @return Player
+     */
     public function editPlayer(EditPlayerDto $dto): Player
     {
         $player = $this->playerRepository->find($dto->getId());
@@ -99,5 +108,18 @@ class PlayerService extends AbstractMultiTransformer
         $this->entityManager->flush();
 
         return $player;
+    }
+
+    /**
+     * @param int $playerId
+     * @return bool
+     */
+    public function deletePlayer(int $playerId): bool
+    {
+        $player = $this->playerRepository->find($playerId);
+        $this->entityManager->remove(($player));
+        $this->entityManager->flush();
+        return true;
+
     }
 }
