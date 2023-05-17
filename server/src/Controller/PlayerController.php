@@ -29,7 +29,7 @@ class PlayerController extends ApiController
      * @throws JsonException
      */
     #[Route('api/players', methods: ('POST'))]
-    public function  createPlayer(Request $request): Response
+    public function createPlayer(Request $request): Response
     {
     $dto = $this->getValidatedDto($request, CreatePlayerDto::class);
     return$this->json($this->playerService->createPlayer($dto));

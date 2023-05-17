@@ -10,7 +10,7 @@ use App\Repository\PlayerRepository;
 use App\Repository\RoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
+
 
 class PlayerService extends AbstractMultiTransformer
 {
