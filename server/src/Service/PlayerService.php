@@ -114,12 +114,23 @@ class PlayerService extends AbstractMultiTransformer
      * @param int $playerId
      * @return bool
      */
-    public function deletePlayer(int $playerId): bool
+    public function deletePlayer(int $id): bool
     {
-        $player = $this->playerRepository->find($playerId);
+        $player = $this->playerRepository->find($id);
         $this->entityManager->remove(($player));
         $this->entityManager->flush();
         return true;
+
+    }
+
+    /**
+     * @param $id
+     * @return Player|null
+     */
+
+    public function getOnePlayer($id): ?Player
+    {
+       return $this->playerRepository->find($id);
 
     }
 }

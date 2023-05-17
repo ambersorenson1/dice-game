@@ -44,6 +44,14 @@ class PlayerController extends ApiController
         return $this->json($this->playerService->getPlayers());
     }
 
+    #[Route('api/players/{id}', methods: ('GET'))]
+    public function getOnePlayer($id): Response
+    {
+        return $this->json($this->playerService->getOnePlayer($id));
+
+    }
+
+
     /**
      * @throws InvalidRequestDataException
      * @throws JsonException
