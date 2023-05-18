@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Incoming\CreateGameDto;
+use App\Dto\Incoming\EditGameDto;
 use App\Exception\InvalidRequestDataException;
 use App\Serialization\SerializationService;
 use App\Service\GameService;
@@ -33,5 +34,18 @@ class GameController extends ApiController
         return $this->json($this->gameService->createGame($dto));
     }
 
+    #[Route('api/games/{id}', methods: ('GET'))]
+    public function getAllGames(): Response
+    {
+        return $this->json($this->gameService->getAllGames());
+    }
+
+    #[Route('api/games/{id}', methods: ('PUT'))]
+    public function editGame(Request $request, $id): Response
+    {
+        $dto = $this->getValidatedDto($request, EditGameDto::class);
+        $dto->setGameId($id);
+        return $this->json($this->gameService->editGame($dto));
+    }
 
 }
