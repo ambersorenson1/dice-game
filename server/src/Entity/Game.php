@@ -28,18 +28,18 @@ class Game
     private ?string $player_two_score = null;
 
 
-    #[ORM\OneToMany(mappedBy: 'Games', targetEntity: Round::class)]
+    #[ORM\OneToMany(mappedBy: 'Game', targetEntity: Round::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'round_id', referencedColumnName: 'round_id')]
     private Collection $Round;
 
-    #[ORM\OneToMany(mappedBy: 'Game', targetEntity: Player::class)]
+    #[ORM\OneToMany(mappedBy: 'Game', targetEntity: Player::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'player_id', referencedColumnName: 'player_id')]
     private Collection $Players;
 
 
     public function __construct()
     {
-        $this->Round = new ArrayCollection();
+        $this->Rounds = new ArrayCollection();
         $this->Players = new ArrayCollection();
     }
 
@@ -104,16 +104,16 @@ class Game
     /**
      * @return Collection<int, Round>
      */
-    public function getRound(): Collection
+    public function getRounds(): Collection
     {
-        return $this->Round;
+        return $this->Rounds;
     }
 
     public function addRound(Round $round): self
     {
-        if (!$this->Round->contains($round)) {
-            $this->Round->add($round);
-            $round->setGames($this);
+        if (!$this->Rounds->contains($round)) {
+            $this->Rounds->add($round);
+            $round->setGame($this);
         }
 
         return $this;
@@ -121,10 +121,10 @@ class Game
 
     public function removeRound(Round $round): self
     {
-        if ($this->Round->removeElement($round)) {
+        if ($this->Rounds->removeElement($round)) {
             // set the owning side to null (unless already changed)
-            if ($round->getGames() === $this) {
-                $round->setGames(null);
+            if ($round->getGame() === $this) {
+                $round->setGame(null);
             }
         }
 

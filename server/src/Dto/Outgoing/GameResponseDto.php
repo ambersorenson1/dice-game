@@ -8,6 +8,24 @@ class GameResponseDto {
     public int $playerTwoId;
     public string $playerOneScore;
     public string $playerTwoScore;
+    private array $rounds = [];
+
+    /**
+     * @return array
+     */
+    public function getRounds(): array
+    {
+        return $this->rounds;
+    }
+
+    /**
+     * @param array $rounds
+     */
+    public function setRounds(array $rounds): void
+    {
+        $this->rounds = $rounds;
+
+    }
 
     /**
      * @return int

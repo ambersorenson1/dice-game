@@ -5,10 +5,14 @@ namespace App\Service;
 use App\Dto\Incoming\CreateGameDto;
 use App\Dto\Incoming\EditGameDto;
 use App\Dto\Outgoing\GameResponseDto;
+use App\Dto\Outgoing\RollResponseDto;
+use App\Dto\Outgoing\RoundResponseDto;
 use App\Entity\Game;
+use App\Entity\Roll;
+use App\Entity\Round;
 use App\Repository\GameRepository;
 use App\Repository\PlayerRepository;
-use App\Service\AbstractMultiTransformer;
+use App\Repository\RoundRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -24,8 +28,9 @@ class GameService extends AbstractMultiTransformer
      * @param PlayerRepository $playerRepository
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
+     * @param RoundRepository $roundRepository
      */
-    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger )
+    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->gameRepository = $gameRepository;
         $this->playerRepository = $playerRepository;
@@ -42,28 +47,47 @@ class GameService extends AbstractMultiTransformer
         $game = new Game();
         $game->setPlayerOneId($createGameDto->getPlayerOneId());
         $game->setPlayerTwoId($createGameDto->getPlayerTwoId());
-        $game->setPlayerOneScore($createGameDto->getPlayerOneScore());
-        $game->setPlayerTwoScore($createGameDto->getPlayerTwoScore());
+        $game->setPlayerOneScore(0);
+        $game->setPlayerTwoScore(0);
         $this->entityManager->persist($game);
+        $this->entityManager->flush();
+
+        $round = new Round();
+        $round->setGame($game);
+        $round->setPlayerOneScore(0);
+        $round->setPlayerTwoScore(0);
+        $game->addRound($round);
+        $this->entityManager->persist($round);
+
+        $roll = new Roll();
+        $round->addRoll($roll);
+        $this->entityManager->persist($roll);
+
         $this->entityManager->flush();
 
         return $this->transformFromObject($game);
     }
 
-    /**
-     * @param $game
-     * @return GameResponseDto
-     */
-    public function transformFromObject($object):GameResponseDto
-    {
-        $dto = new GameResponseDto();
-        $dto->setGameId($object->getGameId());
-        $dto->setPlayerOneId($object->getPlayerOneId());
-        $dto->setPlayerTwoId($object->getPlayerTwoId());
-        $dto->setPlayerOneScore($object->getPlayerOneScore());
-        $dto->setPlayerTwoScore($object->getPlayerTwoScore());
 
-        return $dto;
+
+
+
+
+
+
+    /**
+     * @param EditGameDto $dto
+     * @return Game|null
+     */
+    public function editGame(EditGameDto $dto): ?Game
+    {
+        $game = $this->gameRepository->find($dto->getGameId());
+        $game->setPlayerOneScore(($dto->getPlayerOneScore()));
+        $game->setPlayerTwoScore(($dto->getPlayerTwoScore()));
+        $this->entityManager->persist($game);
+        $this->entityManager->flush();
+
+        return $game;
     }
 
     /**
@@ -81,17 +105,36 @@ class GameService extends AbstractMultiTransformer
     }
 
     /**
-     * @param EditGameDto $dto
-     * @return Game|null
+     * @param $object
+     * @return GameResponseDto
      */
-    public function editGame(EditGameDto $dto): ?Game
+    public function transformFromObject($object): GameResponseDto
     {
-        $game = $this->gameRepository->find($dto->getGameId());
-        $game->setPlayerOneScore(($dto->getPlayerOneScore()));
-        $game->setPlayerTwoScore(($dto->getPlayerTwoScore()));
-        $this->entityManager->persist($game);
-        $this->entityManager->flush();
+        $dto = new GameResponseDto();
+        $dto->setGameId($object->getGameId());
+        $dto->setPlayerOneId($object->getPlayerOneId());
+        $dto->setPlayerTwoId($object->getPlayerTwoId());
+        $dto->setPlayerOneScore($object->getPlayerOneScore());
+        $dto->setPlayerTwoScore($object->getPlayerTwoScore());
 
-        return $game;
+        $rounds = [];
+        foreach ($object->getRounds() as $round) {
+            $roundDto = new RoundResponseDto();
+            $roundDto->setRoundId($round->getRoundId());
+
+            $rolls = [];
+            foreach ($round->getRolls() as $roll) {
+                $rollDto = new RollResponseDto();
+                $rollDto->setRollId($roll->getRollId());
+                $rolls[] = $rollDto;
+            }
+            $roundDto->setRolls($rolls);
+
+            $rounds[] = $roundDto;
+        }
+
+        $dto->setRounds($rounds);
+
+        return $dto;
     }
 }

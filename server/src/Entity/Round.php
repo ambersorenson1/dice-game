@@ -25,14 +25,11 @@ class Round
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $player_two_score = null;
 
-    #[ORM\Column]
-    private ?int $roll_id = null;
-
-    #[ORM\ManyToOne(inversedBy: 'Round')]
+    #[ORM\ManyToOne(inversedBy: 'Rounds')]
     #[ORM\JoinColumn(name: 'game_id', referencedColumnName: 'game_id', nullable: false)]
-    private ?Game $Games = null;
+    private ?Game $Game = null;
 
-    #[ORM\OneToMany(mappedBy: 'Round', targetEntity: Roll::class)]
+    #[ORM\OneToMany(mappedBy: 'Round', targetEntity: Roll::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'roll_id', referencedColumnName: 'roll_id')]
     private Collection $Rolls;
 
@@ -85,26 +82,15 @@ class Round
         return $this;
     }
 
-    public function getRollId(): ?int
+
+    public function getGame(): ?Game
     {
-        return $this->roll_id;
+        return $this->Game;
     }
 
-    public function setRollId(int $roll_id): self
+    public function setGame(?Game $Game): self
     {
-        $this->roll_id = $roll_id;
-
-        return $this;
-    }
-
-    public function getGames(): ?Game
-    {
-        return $this->Games;
-    }
-
-    public function setGames(?Game $Games): self
-    {
-        $this->Games = $Games;
+        $this->Game = $Game;
 
         return $this;
     }
@@ -120,7 +106,7 @@ class Round
     public function addRoll(Roll $roll): self
     {
         if (!$this->Rolls->contains($roll)) {
-            $this->Rolls->add($roll);
+            $this->Rolls[] = $roll;
             $roll->setRound($this);
         }
 
