@@ -39,7 +39,7 @@ class Game
 
     public function __construct()
     {
-        $this->Rounds = new ArrayCollection();
+        $this->Round = new ArrayCollection();
         $this->Players = new ArrayCollection();
     }
 
@@ -104,15 +104,15 @@ class Game
     /**
      * @return Collection<int, Round>
      */
-    public function getRounds(): Collection
+    public function getRound(): Collection
     {
-        return $this->Rounds;
+        return $this->Round;
     }
 
     public function addRound(Round $round): self
     {
-        if (!$this->Rounds->contains($round)) {
-            $this->Rounds->add($round);
+        if (!$this->Round->contains($round)) {
+            $this->Round->add($round);
             $round->setGame($this);
         }
 
@@ -121,7 +121,7 @@ class Game
 
     public function removeRound(Round $round): self
     {
-        if ($this->Rounds->removeElement($round)) {
+        if ($this->Round->removeElement($round)) {
             // set the owning side to null (unless already changed)
             if ($round->getGame() === $this) {
                 $round->setGame(null);

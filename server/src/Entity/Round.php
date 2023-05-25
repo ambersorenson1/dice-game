@@ -29,15 +29,14 @@ class Round
     #[ORM\JoinColumn(name: 'game_id', referencedColumnName: 'game_id', nullable: false)]
     private ?Game $Game = null;
 
-    #[ORM\OneToMany(mappedBy: 'Round', targetEntity: Roll::class, cascade: ['persist'])]
-    #[ORM\JoinColumn(name: 'roll_id', referencedColumnName: 'roll_id')]
-    private Collection $Rolls;
+    #[ORM\OneToMany(mappedBy: 'Round', targetEntity: Roll::class)]
+    #[ORM\JoinColumn(name: 'roll_id', referencedColumnName: 'roll_id', nullable: true)]
+    private Collection $rolls;
 
     public function __construct()
     {
-        $this->Rolls = new ArrayCollection();
+        $this->rolls = new ArrayCollection();
     }
-
 
     /**
      * @return int|null
@@ -100,13 +99,13 @@ class Round
      */
     public function getRolls(): Collection
     {
-        return $this->Rolls;
+        return $this->rolls;
     }
 
     public function addRoll(Roll $roll): self
     {
-        if (!$this->Rolls->contains($roll)) {
-            $this->Rolls[] = $roll;
+        if (!$this->rolls->contains($roll)) {
+            $this->rolls->add($roll);
             $roll->setRound($this);
         }
 
@@ -115,7 +114,7 @@ class Round
 
     public function removeRoll(Roll $roll): self
     {
-        if ($this->Rolls->removeElement($roll)) {
+        if ($this->rolls->removeElement($roll)) {
             // set the owning side to null (unless already changed)
             if ($roll->getRound() === $this) {
                 $roll->setRound(null);

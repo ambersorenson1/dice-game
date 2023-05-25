@@ -28,7 +28,6 @@ class GameService extends AbstractMultiTransformer
      * @param PlayerRepository $playerRepository
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
-     * @param RoundRepository $roundRepository
      */
     public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
@@ -59,21 +58,10 @@ class GameService extends AbstractMultiTransformer
         $game->addRound($round);
         $this->entityManager->persist($round);
 
-        $roll = new Roll();
-        $round->addRoll($roll);
-        $this->entityManager->persist($roll);
-
         $this->entityManager->flush();
 
         return $this->transformFromObject($game);
     }
-
-
-
-
-
-
-
 
     /**
      * @param EditGameDto $dto
@@ -82,13 +70,23 @@ class GameService extends AbstractMultiTransformer
     public function editGame(EditGameDto $dto): ?Game
     {
         $game = $this->gameRepository->find($dto->getGameId());
-        $game->setPlayerOneScore(($dto->getPlayerOneScore()));
-        $game->setPlayerTwoScore(($dto->getPlayerTwoScore()));
+
+        foreach ($dto->getRound() as $roundDto) {
+            $round = new Round();
+            foreach ($roundDto->getRolls() as $rollDto) {
+                $roll = new Roll();
+                $roll->setValue($rollDto->getValue());
+                $round->addRoll($roll);
+            }
+            $game->addRound($round);
+        }
+
         $this->entityManager->persist($game);
         $this->entityManager->flush();
 
         return $game;
     }
+
 
     /**
      * @return iterable
@@ -118,7 +116,7 @@ class GameService extends AbstractMultiTransformer
         $dto->setPlayerTwoScore($object->getPlayerTwoScore());
 
         $rounds = [];
-        foreach ($object->getRounds() as $round) {
+        foreach ($object->getRound() as $round) {
             $roundDto = new RoundResponseDto();
             $roundDto->setRoundId($round->getRoundId());
 
