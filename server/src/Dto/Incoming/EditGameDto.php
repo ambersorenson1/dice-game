@@ -4,80 +4,9 @@ namespace App\Dto\Incoming;
 
 class EditGameDto
 {
-private int $gameId;
-private string $playerOneScore;
-private string $playerTwoScore;
-private string $playerTurn;
-private int $playerOneId;
-private int $playerTwoId;
-private array $round = [];
-
-    /**
-     * @return array
-     */
-    public function getRound(): array
-    {
-        return $this->round;
-    }
-
-    /**
-     * @param array $round
-     */
-    public function setRound(array $round): void
-    {
-        $this->round = $round;
-    }
-    /**
-     * @return int
-     */
-    public function getPlayerOneId(): int
-    {
-        return $this->playerOneId;
-    }
-
-    /**
-     * @param int $playerOneId
-     */
-    public function setPlayerOneId(int $playerOneId): void
-    {
-        $this->playerOneId = $playerOneId;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPlayerTwoId(): int
-    {
-        return $this->playerTwoId;
-    }
-
-    /**
-     * @param int $playerTwoId
-     */
-    public function setPlayerTwoId(int $playerTwoId): void
-    {
-        $this->playerTwoId = $playerTwoId;
-    }
-
-
-
-
-    /**
-     * @return string
-     */
-    public function getPlayerTurn(): string
-    {
-        return $this->playerTurn;
-    }
-
-    /**
-     * @param string $playerTurn
-     */
-    public function setPlayerTurn(string $playerTurn): void
-    {
-        $this->playerTurn = $playerTurn;
-    }
-
+    private int $gameId;
+    private int $playerOneScore;
+    private int $playerTwoScore;
 
     /**
      * @return int
@@ -96,34 +25,36 @@ private array $round = [];
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getPlayerOneScore(): string
+    public function getPlayerOneScore(): int
     {
         return $this->playerOneScore;
     }
 
     /**
-     * @param string $playerOneScore
+     * @param int $playerOneScore
      */
-    public function setPlayerOneScore(string $playerOneScore): void
+    public function setPlayerOneScore(int $playerOneScore): void
     {
         $this->playerOneScore = $playerOneScore;
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getPlayerTwoScore(): string
+    public function getPlayerTwoScore(): int
     {
         return $this->playerTwoScore;
     }
 
     /**
-     * @param string $playerTwoScore
+     * @param int $playerTwoScore
      */
-    public function setPlayerTwoScore(string $playerTwoScore): void
+    public function setPlayerTwoScore(int $playerTwoScore): void
     {
         $this->playerTwoScore = $playerTwoScore;
     }
+
+
 }

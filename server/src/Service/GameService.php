@@ -14,7 +14,9 @@ use App\Repository\GameRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\RoundRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
+use function PHPUnit\Framework\throwException;
 
 class GameService extends AbstractMultiTransformer
 {
@@ -22,6 +24,7 @@ class GameService extends AbstractMultiTransformer
     private PlayerRepository $playerRepository;
     private EntityManagerInterface $entityManager;
     private LoggerInterface $logger;
+    private RoundRepository $roundRepository;
 
     /**
      * @param GameRepository $gameRepository
@@ -29,11 +32,12 @@ class GameService extends AbstractMultiTransformer
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      */
-    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, RoundRepository $roundRepository)
     {
         $this->gameRepository = $gameRepository;
         $this->playerRepository = $playerRepository;
         $this->entityManager = $entityManager;
+        $this->roundRepository = $roundRepository;
         $this->logger = $logger;
     }
 
@@ -67,25 +71,36 @@ class GameService extends AbstractMultiTransformer
      * @param EditGameDto $dto
      * @return Game|null
      */
-    public function editGame(EditGameDto $dto): ?Game
+    public function editGame(EditGameDto $dto): GameResponseDto
     {
         $game = $this->gameRepository->find($dto->getGameId());
-
-        foreach ($dto->getRound() as $roundDto) {
-            $round = new Round();
-            foreach ($roundDto->getRolls() as $rollDto) {
-                $roll = new Roll();
-                $roll->setValue($rollDto->getValue());
-                $round->addRoll($roll);
-            }
-            $game->addRound($round);
-        }
-
+        $game->setPlayerOneScore($dto->getPlayerOneScore());
+        $game->setPlayerTwoScore($dto->getPlayerTwoScore());
         $this->entityManager->persist($game);
         $this->entityManager->flush();
 
-        return $game;
+        return $this->transformFromObject($game);
     }
+
+
+//    /**
+//     * @throws Exception
+//     */
+//    public function startNewRound(int $gameId): Round
+//    {
+//        $game = $this->$this->gameRepository->find($gameId);
+//        if(count($game->getRound()) >=5) {
+//            throw new Exception('Maximum number of rounds reached for this game.');
+//        }
+//        $round = new Round();
+//        $game->addRound($round);
+//
+//        $this->entityManager->persist($round);
+//        $this->entityManager->flush();
+//
+//        return $round;
+//    }
+
 
 
     /**
@@ -115,24 +130,16 @@ class GameService extends AbstractMultiTransformer
         $dto->setPlayerOneScore($object->getPlayerOneScore());
         $dto->setPlayerTwoScore($object->getPlayerTwoScore());
 
-        $rounds = [];
-        foreach ($object->getRound() as $round) {
-            $roundDto = new RoundResponseDto();
-            $roundDto->setRoundId($round->getRoundId());
+            $rounds = [];
+            foreach ($object->getRound() as $round) {
+                $roundDto = new RoundResponseDto();
+                $roundDto->setRoundId($round->getRoundId());
 
-            $rolls = [];
-            foreach ($round->getRolls() as $roll) {
-                $rollDto = new RollResponseDto();
-                $rollDto->setRollId($roll->getRollId());
-                $rolls[] = $rollDto;
+                $rounds[] = $roundDto;
             }
-            $roundDto->setRolls($rolls);
 
-            $rounds[] = $roundDto;
+            $dto->setRounds($rounds);
+
+            return $dto;
         }
-
-        $dto->setRounds($rounds);
-
-        return $dto;
-    }
 }

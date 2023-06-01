@@ -7,6 +7,7 @@ use App\Dto\Incoming\EditGameDto;
 use App\Exception\InvalidRequestDataException;
 use App\Serialization\SerializationService;
 use App\Service\GameService;
+use App\Service\RollService;
 use JsonException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,11 +17,13 @@ class GameController extends ApiController
 {
    private GameService $gameService;
     private SerializationService $serializationService;
+    private RollService $rollService;
 
-    public function __construct(SerializationService $serializationService, GameService $gameService)
+    public function __construct(SerializationService $serializationService, GameService $gameService, RollService $rollService)
     {
         parent::__construct($serializationService);
         $this->gameService = $gameService;
+        $this->rollService = $rollService;
     }
 
     /**
@@ -39,6 +42,15 @@ class GameController extends ApiController
     {
         return $this->json($this->gameService->getAllGames());
     }
+
+    #[Route('api/values/{id}', methods: ('GET'))]
+    public function getRollValues($id): Response
+    {
+        $rollResponseDtos = $this->rollService->getValuesByPlayerId($id);
+
+        return $this->json($rollResponseDtos);
+    }
+
 
     #[Route('api/games/{id}', methods: ('PUT'))]
     public function editGame(Request $request, $id): Response
