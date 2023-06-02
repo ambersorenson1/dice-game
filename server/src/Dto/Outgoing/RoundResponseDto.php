@@ -1,33 +1,32 @@
 <?php
 
-namespace App\Dto\Incoming;
+namespace App\Dto\Outgoing;
 
-
-class EditGameDto
+class RoundResponseDto
 {
-    private int $gameId;
-    /**
-     * @var AddRoundDto[]
-     */
-    private array $round;
+    public int $roundId;
+    public int $gameId;
+    public int $playerOneScore;
+    public int $playerTwoScore;
+
+    /** @var RollResponseDto[] */
+    public array $rolls = [];
 
     /**
-     * @return AddRoundDto[]
+     * @return int
      */
-    public function getRounds(): array
+    public function getRoundId(): int
     {
-        return $this->round;
-
+        return $this->roundId;
     }
 
     /**
-     * @param array $round
+     * @param int $roundId
      */
-    public function setRound(array $round): void
+    public function setRoundId(int $roundId): void
     {
-        $this->round = $round;
+        $this->roundId = $roundId;
     }
-
 
     /**
      * @return int
@@ -45,30 +44,6 @@ class EditGameDto
         $this->gameId = $gameId;
     }
 
-}
-
-class AddRoundDto
-{
-    /** @var int[] */
-    private array $rolls;
-    private int $playerOneScore =0;
-    private int $playerTwoScore = 0;
-
-    /**
-     * @return array
-     */
-    public function getRolls(): array
-    {
-        return $this->rolls;
-    }
-
-    /**
-     * @param array $rolls
-     */
-    public function setRolls(array $rolls): void
-    {
-        $this->rolls = $rolls;
-    }
     /**
      * @return int
      */
@@ -100,6 +75,20 @@ class AddRoundDto
     {
         $this->playerTwoScore = $playerTwoScore;
     }
+
+    /**
+     * @return array
+     */
+    public function getRolls(): array
+    {
+        return $this->rolls;
+    }
+
+    /**
+     * @param array $rolls
+     */
+    public function setRolls(array $rolls): void
+    {
+        $this->rolls = $rolls;
+    }
 }
-
-

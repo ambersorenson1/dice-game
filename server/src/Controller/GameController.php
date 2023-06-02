@@ -43,14 +43,6 @@ class GameController extends ApiController
         return $this->json($this->gameService->getAllGames());
     }
 
-    #[Route('api/values/{id}', methods: ('GET'))]
-    public function getRollValues($id): Response
-    {
-        $rollResponseDtos = $this->rollService->getValuesByPlayerId($id);
-
-        return $this->json($rollResponseDtos);
-    }
-
 
     #[Route('api/games/{id}', methods: ('PUT'))]
     public function editGame(Request $request, $id): Response

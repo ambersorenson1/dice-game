@@ -25,21 +25,26 @@ class GameService extends AbstractMultiTransformer
     private EntityManagerInterface $entityManager;
     private LoggerInterface $logger;
     private RoundRepository $roundRepository;
+    private RoundService $roundService;
 
     /**
      * @param GameRepository $gameRepository
      * @param PlayerRepository $playerRepository
      * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
+     * @param RoundRepository $roundRepository
+     * @param RoundService $roundService
      */
-    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, RoundRepository $roundRepository)
+    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, RoundRepository $roundRepository, RoundService $roundService)
     {
         $this->gameRepository = $gameRepository;
         $this->playerRepository = $playerRepository;
         $this->entityManager = $entityManager;
-        $this->roundRepository = $roundRepository;
         $this->logger = $logger;
+        $this->roundRepository = $roundRepository;
+        $this->roundService = $roundService;
     }
+
 
     /**
      * @param CreateGameDto $createGameDto
@@ -50,20 +55,8 @@ class GameService extends AbstractMultiTransformer
         $game = new Game();
         $game->setPlayerOneId($createGameDto->getPlayerOneId());
         $game->setPlayerTwoId($createGameDto->getPlayerTwoId());
-        $game->setPlayerOneScore(0);
-        $game->setPlayerTwoScore(0);
         $this->entityManager->persist($game);
         $this->entityManager->flush();
-
-        $round = new Round();
-        $round->setGame($game);
-        $round->setPlayerOneScore(0);
-        $round->setPlayerTwoScore(0);
-        $game->addRound($round);
-        $this->entityManager->persist($round);
-
-        $this->entityManager->flush();
-
         return $this->transformFromObject($game);
     }
 
@@ -74,8 +67,21 @@ class GameService extends AbstractMultiTransformer
     public function editGame(EditGameDto $dto): GameResponseDto
     {
         $game = $this->gameRepository->find($dto->getGameId());
-        $game->setPlayerOneScore($dto->getPlayerOneScore());
-        $game->setPlayerTwoScore($dto->getPlayerTwoScore());
+        foreach ($dto->getRounds() as $roundDto) {
+            $roundEntity = new Round();
+            $roundEntity->setPlayerOneScore($roundDto->getPlayerOneScore());
+            $roundEntity->setPlayerTwoScore($roundDto->getPlayerTwoScore());
+            $rolls = $roundDto->getRolls();
+            foreach ($rolls as $rollValue) {
+                $rollEntity = new Roll();
+                $rollEntity->setValue($rollValue);
+                $rollEntity->setRound($roundEntity);
+                $roundEntity->addRoll($rollEntity);
+            }
+
+            $game->addRound($roundEntity);
+        }
+
         $this->entityManager->persist($game);
         $this->entityManager->flush();
 
@@ -127,19 +133,15 @@ class GameService extends AbstractMultiTransformer
         $dto->setGameId($object->getGameId());
         $dto->setPlayerOneId($object->getPlayerOneId());
         $dto->setPlayerTwoId($object->getPlayerTwoId());
-        $dto->setPlayerOneScore($object->getPlayerOneScore());
-        $dto->setPlayerTwoScore($object->getPlayerTwoScore());
 
-            $rounds = [];
-            foreach ($object->getRound() as $round) {
-                $roundDto = new RoundResponseDto();
-                $roundDto->setRoundId($round->getRoundId());
-
-                $rounds[] = $roundDto;
-            }
-
-            $dto->setRounds($rounds);
-
-            return $dto;
+        $roundsDto = [];
+        foreach($object->getRounds() as $round) {
+            $roundsDto[] = $this->roundService->transformToObject($round);
         }
+
+        $dto->setRounds($roundsDto);
+
+        return $dto;
+    }
+
 }

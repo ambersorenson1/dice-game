@@ -29,7 +29,7 @@ class Round
     #[ORM\JoinColumn(name: 'game_id', referencedColumnName: 'game_id', nullable: false)]
     private ?Game $Game = null;
 
-    #[ORM\OneToMany(mappedBy: 'Round', targetEntity: Roll::class)]
+    #[ORM\OneToMany(mappedBy: 'Round', targetEntity: Roll::class, cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(name: 'roll_id', referencedColumnName: 'roll_id', nullable: true)]
     private Collection $rolls;
 
