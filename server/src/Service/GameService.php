@@ -62,7 +62,7 @@ class GameService extends AbstractMultiTransformer
 
     /**
      * @param EditGameDto $dto
-     * @return Game|null
+     * @return GameResponseDto
      */
     public function editGame(EditGameDto $dto): GameResponseDto
     {
@@ -122,6 +122,17 @@ class GameService extends AbstractMultiTransformer
         }
         return $gamesDtos;
     }
+
+    /**
+     * @param int $gameId
+     * @return GameResponseDto
+     */
+    public function getGameById(int $gameId): GameResponseDto
+    {
+        $game = $this->gameRepository->find($gameId);
+        return $this->transformFromObject($game);
+    }
+
 
     /**
      * @param $object
