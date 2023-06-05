@@ -69,7 +69,7 @@ class PlayerController extends ApiController
     }
 
     /**
-     * @param int $playerId
+     * @param int $id
      * @return Response
      */
     #[Route('api/players/{id}', methods: ('DELETE'))]

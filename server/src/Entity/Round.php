@@ -6,6 +6,7 @@ use App\Repository\RoundRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RoundRepository::class)]
 class Round
@@ -13,6 +14,7 @@ class Round
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
+    #[Groups("round")]
     private ?int $round_id = null;
 
     #[ORM\Column]
@@ -24,6 +26,7 @@ class Round
 
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $player_two_score = null;
+
 
     #[ORM\ManyToOne(inversedBy: 'Rounds')]
     #[ORM\JoinColumn(name: 'game_id', referencedColumnName: 'game_id', nullable: false)]

@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use App\Repository\RollRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RollRepository::class)]
 class Roll
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]

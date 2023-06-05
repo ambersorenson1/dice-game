@@ -4,19 +4,20 @@ namespace App\Service;
 
 use App\Dto\Incoming\CreateGameDto;
 use App\Dto\Incoming\EditGameDto;
+use App\Dto\Incoming\EditRoundDto;
+use App\Dto\Incoming\StartNewRoundDto;
 use App\Dto\Outgoing\GameResponseDto;
-use App\Dto\Outgoing\RollResponseDto;
-use App\Dto\Outgoing\RoundResponseDto;
 use App\Entity\Game;
 use App\Entity\Roll;
 use App\Entity\Round;
 use App\Repository\GameRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\RoundRepository;
+use App\Serialization\SerializationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
-use function PHPUnit\Framework\throwException;
+
 
 class GameService extends AbstractMultiTransformer
 {
@@ -26,6 +27,7 @@ class GameService extends AbstractMultiTransformer
     private LoggerInterface $logger;
     private RoundRepository $roundRepository;
     private RoundService $roundService;
+    private SerializationService $serializationService;
 
     /**
      * @param GameRepository $gameRepository
@@ -34,8 +36,9 @@ class GameService extends AbstractMultiTransformer
      * @param LoggerInterface $logger
      * @param RoundRepository $roundRepository
      * @param RoundService $roundService
+     * @param SerializationService $serializationService
      */
-    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, RoundRepository $roundRepository, RoundService $roundService)
+    public function __construct(GameRepository $gameRepository, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, LoggerInterface $logger, RoundRepository $roundRepository, RoundService $roundService, SerializationService $serializationService)
     {
         $this->gameRepository = $gameRepository;
         $this->playerRepository = $playerRepository;
@@ -43,6 +46,7 @@ class GameService extends AbstractMultiTransformer
         $this->logger = $logger;
         $this->roundRepository = $roundRepository;
         $this->roundService = $roundService;
+        $this->serializationService = $serializationService;
     }
 
 
@@ -89,23 +93,34 @@ class GameService extends AbstractMultiTransformer
     }
 
 
-//    /**
-//     * @throws Exception
-//     */
-//    public function startNewRound(int $gameId): Round
-//    {
-//        $game = $this->$this->gameRepository->find($gameId);
-//        if(count($game->getRound()) >=5) {
-//            throw new Exception('Maximum number of rounds reached for this game.');
-//        }
-//        $round = new Round();
-//        $game->addRound($round);
-//
-//        $this->entityManager->persist($round);
-//        $this->entityManager->flush();
-//
-//        return $round;
-//    }
+    /**
+     * @throws Exception
+     */
+    public function startNewRound(StartNewRoundDto $dto): GameResponseDto
+    {
+        $game = $this->gameRepository->find($dto->getGameId());
+        if(count($game->getRounds()) >= 5) {
+            throw new Exception('Maximum number of rounds reached for this game.');
+        }
+
+        $roundEntity = new Round();
+        $roundEntity->setPlayerOneScore($dto->getPlayerOneScore());
+        $roundEntity->setPlayerTwoScore($dto->getPlayerTwoScore());
+        $rolls = $dto->getRolls();
+        foreach ($rolls as $rollValue) {
+            $rollEntity = new Roll();
+            $rollEntity->setValue($rollValue);
+            $rollEntity->setRound($roundEntity);
+            $roundEntity->addRoll($rollEntity);
+        }
+
+        $game->addRound($roundEntity);
+        $this->entityManager->persist($game);
+        $this->entityManager->flush();
+
+        return $this->transformFromObject($game);
+    }
+
 
 
 

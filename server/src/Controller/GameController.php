@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Dto\Incoming\CreateGameDto;
 use App\Dto\Incoming\EditGameDto;
+use App\Dto\Incoming\EditRoundDto;
+use App\Dto\Incoming\StartNewRoundDto;
 use App\Exception\InvalidRequestDataException;
 use App\Serialization\SerializationService;
 use App\Service\GameService;
@@ -48,13 +50,34 @@ class GameController extends ApiController
     }
 
 
+    /**
+     * @throws Exception
+     */
+    #[Route('api/games/newRound/{id}', methods: ('POST'))]
+    public function startNewRound(Request $request, $id): Response
+    {
+        $dto = $this->getValidatedDto($request, StartNewRoundDto::class);
+        $dto->setGameId($id);
+        return $this->json($this->gameService->startNewRound($dto));
+
+    }
+
+    /**
+     * @return Response
+     */
     #[Route('api/games', methods: ('GET'))]
     public function getAllGames(): Response
     {
         return $this->json($this->gameService->getAllGames());
     }
 
-
+    /**
+     * @param Request $request
+     * @param $id
+     * @return Response
+     * @throws InvalidRequestDataException
+     * @throws JsonException
+     */
     #[Route('api/games/{id}', methods: ('PUT'))]
     public function editGame(Request $request, $id): Response
     {
