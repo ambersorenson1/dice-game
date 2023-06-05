@@ -2,27 +2,15 @@
 
 namespace App\Dto\Outgoing;
 
-
 class RoundResponseDto
 {
-  private int $roundId;
-  private array $rolls = [];
+    public int $roundId;
+    public int $gameId;
+    public int $playerOneScore;
+    public int $playerTwoScore;
 
-    /**
-     * @return array
-     */
-    public function getRolls(): array
-    {
-        return $this->rolls;
-    }
-
-    /**
-     * @param RollResponseDto[] $rolls
-     */
-    public function setRolls(array $rolls): void
-    {
-        $this->rolls = $rolls;
-    }
+    /** @var RollResponseDto[] */
+    public array $rolls = [];
 
     /**
      * @return int
@@ -38,5 +26,69 @@ class RoundResponseDto
     public function setRoundId(int $roundId): void
     {
         $this->roundId = $roundId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGameId(): int
+    {
+        return $this->gameId;
+    }
+
+    /**
+     * @param int $gameId
+     */
+    public function setGameId(int $gameId): void
+    {
+        $this->gameId = $gameId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPlayerOneScore(): int
+    {
+        return $this->playerOneScore;
+    }
+
+    /**
+     * @param int $playerOneScore
+     */
+    public function setPlayerOneScore(int $playerOneScore): void
+    {
+        $this->playerOneScore = $playerOneScore;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPlayerTwoScore(): int
+    {
+        return $this->playerTwoScore;
+    }
+
+    /**
+     * @param int $playerTwoScore
+     */
+    public function setPlayerTwoScore(int $playerTwoScore): void
+    {
+        $this->playerTwoScore = $playerTwoScore;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRolls(): array
+    {
+        return $this->rolls;
+    }
+
+    /**
+     * @param array $rolls
+     */
+    public function setRolls(array $rolls): void
+    {
+        $this->rolls = $rolls;
     }
 }

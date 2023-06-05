@@ -6,6 +6,23 @@ class CreateGameDto {
     private int $playerTwoId;
     private string $playerOneScore;
     private string $playerTwoScore;
+    private string $playerTurnId;
+
+    /**
+     * @return string
+     */
+    public function getPlayerTurnId(): string
+    {
+        return $this->playerTurnId;
+    }
+
+    /**
+     * @param string $playerTurnId
+     */
+    public function setPlayerTurnId(string $playerTurnId): void
+    {
+        $this->playerTurnId = $playerTurnId;
+    }
 
     /**
      * @return int

@@ -3,31 +3,13 @@
 namespace App\Dto\Incoming;
 
 
-class EditGameDto
+class EditRoundDto
 {
+    /** @var int[] */
+    private array $rolls;
+    private int $playerOneScore =0;
+    private int $playerTwoScore = 0;
     private int $gameId;
-    /**
-     * @var AddRoundDto[]
-     */
-    private array $round;
-
-    /**
-     * @return AddRoundDto[]
-     */
-    public function getRounds(): array
-    {
-        return $this->round;
-
-    }
-
-    /**
-     * @param array $round
-     */
-    public function setRound(array $round): void
-    {
-        $this->round = $round;
-    }
-
 
     /**
      * @return int
@@ -44,15 +26,6 @@ class EditGameDto
     {
         $this->gameId = $gameId;
     }
-
-}
-
-class AddRoundDto
-{
-    /** @var int[] */
-    private array $rolls;
-    private int $playerOneScore =0;
-    private int $playerTwoScore = 0;
 
     /**
      * @return array
@@ -101,5 +74,3 @@ class AddRoundDto
         $this->playerTwoScore = $playerTwoScore;
     }
 }
-
-
